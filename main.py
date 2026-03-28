@@ -40,11 +40,6 @@ def exportar_dados(df, nome_arquivo):
         except Exception as erro:
             logger.error(f"Erro ao exportar {nome_arquivo}: {erro}")
 
-def exportar_csv(df, nome_arquivo):
-    caminho = SAIDA / f"{nome_arquivo}.csv"
-    df.to_csv(caminho, index=False, encoding="utf-8")
-    logger.info(f"{nome_arquivo} exportado em CSV em data/ com sucesso!")
-
 def export_ids(ids, nome_arquivo):
     ids.to_excel(SAIDA / f"{nome_arquivo}.xlsx", index=False)
     logger.info(f"{nome_arquivo} exportado em excel com sucesso!")
@@ -63,14 +58,10 @@ if __name__ == "__main__":
     programas_tratados = tratar_programas(programas, PROGRAMAS_COLUNAS_EXCLUIR)
     ids_tratados = tratar_ids(ids, programas_tratados)
     convenios_tratados = tratar_convenios(convenios, ids_tratados)
-    # exibir_dados(convenios, nome='Convênios')
 
-    exportar_csv(propostas_tratadas, 'propostas_tratadas')
-    exportar_csv(programas_tratados, 'programas_tratados')
-    exportar_csv(ids_tratados, 'ids_tratados')
-    exportar_csv(convenios_tratados, 'convenios_tratados')
-
+    exportar_dados(propostas_tratadas, 'propostas_tratadas')
+    exportar_dados(programas_tratados, 'programas_tratados')
+    exportar_dados(ids_tratados, 'ids_tratados')
     exportar_dados(convenios_tratados, 'convenios_tratados')
-    # export_ids(ids_tratados)
 
     logger.info("=== Pipeline concluído com sucesso ===")
