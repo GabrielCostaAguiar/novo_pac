@@ -10,7 +10,7 @@ import re
 
 # ── Diretório raiz do projeto ──────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent
-
+RAW_DIR = BASE_DIR / "raw"
 # ── Caminhos dos arquivos ──────────────────────────────────────────────────
 # raw/ → dados brutos de entrada (SICONV)
 # data/ → arquivos gerados pelo pipeline (resultado, cache de token)
@@ -20,6 +20,13 @@ SICONV_ID = BASE_DIR / "raw" / "siconv_programa_proposta.csv" #Base de dados com
 SICONV_CONVENIOS = BASE_DIR / "raw" / "siconv_convenio.csv"
 
 SAIDA = BASE_DIR / "data"
+
+
+#Caminhos para a extração dos arquivos direto do site do Transferegov
+PROPOSTAS = 'http://repositorio.dados.gov.br/seges/detru/siconv_proposta.csv.zip'
+PROGRAMAS = 'http://repositorio.dados.gov.br/seges/detru/siconv_programa.csv.zip'
+ID = 'http://repositorio.dados.gov.br/seges/detru/siconv_programa_proposta.csv.zip'
+CONVENIOS = 'http://repositorio.dados.gov.br/seges/detru/siconv_convenio.csv.zip'
 
 #Dicionário com todos os eixos do PAC
 NOVO_PAC = {
