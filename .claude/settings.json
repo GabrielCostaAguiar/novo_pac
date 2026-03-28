@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/gabri/.claude/projects/c--Users-gabri-OneDrive-Documentos-Github-novo-pac/memory/**)"
+    ]
+  }
+}
