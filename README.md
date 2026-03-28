@@ -8,24 +8,25 @@ Pipeline de processamento de dados do [Transferegov](https://www.gov.br/transfer
 ## Visão geral
 
 ```
-Transferegov (CSVs) → ETL Python → convenios_tratados.xlsx → Power BI
+Transferegov (download direto) → raw/ (CSVs) → ETL Python → data/ (CSVs + Excel) → Power BI
 ```
 
-O pipeline extrai os dados brutos do Transferegov, filtra por UF, natureza jurídica e programas do PAC, e exporta um arquivo `.xlsx` que alimenta o painel gerencial desenvolvido em Power BI (`BI/gestao_novo_pac.pbix`).
+O pipeline baixa os dados brutos direto do Transferegov, descompacta em `raw/`, filtra por UF, natureza jurídica e programas do PAC, e exporta os resultados em `data/` para alimentar o painel gerencial em Power BI.
 
 ## Estrutura do projeto
 
 ```
 novo_pac/
-├── config.py         # Constantes: caminhos, filtros, listas de programas
+├── config.py         # Constantes: caminhos, URLs, filtros, listas de programas
+├── extract.py        # Download e descompactação dos arquivos do Transferegov
 ├── load.py           # Carregamento dos CSVs
 ├── treatment.py      # Funções de limpeza e filtragem
 ├── logger.py         # Configuração do log
 ├── main.py           # Orquestração do pipeline
 ├── BI/
 │   └── gestao_novo_pac.pbix  # Painel Power BI
-├── raw/              # Dados brutos de entrada (CSVs do Transferegov)
-├── data/             # Outputs gerados (Excel + pipeline.log)
+├── raw/              # Dados brutos baixados automaticamente pelo pipeline
+├── data/             # Outputs gerados (CSVs tratados, Excel + pipeline.log)
 └── requirements.txt
 ```
 
@@ -38,25 +39,29 @@ novo_pac/
 pip install -r requirements.txt
 ```
 
-## Dados de entrada
-
-Baixe os arquivos CSV no portal do [Transferegov](https://www.gov.br/transferegov/pt-br/ferramentas-gestao/dados-abertos/download-dados) e coloque-os na pasta `raw/`:
-
-| Arquivo | Descrição |
-|---|---|
-| `siconv_programa.csv` | Cadastro de programas |
-| `siconv_proposta.csv` | Propostas apresentadas |
-| `siconv_programa_proposta.csv` | Relacionamento programa × proposta |
-| `siconv_convenio.csv` | Convênios firmados |
-
 ## Como executar
 
 ```bash
 python main.py
 ```
 
-O resultado será gerado em `data/convenios_tratados.xlsx`.
-O log de execução fica em `data/pipeline.log`.
+O pipeline executa automaticamente as seguintes etapas:
+
+1. **Extração** — baixa os arquivos `.zip` do Transferegov e descompacta em `raw/`
+2. **Carregamento** — lê os CSVs de `raw/`
+3. **Tratamento** — aplica filtros e limpeza
+4. **Exportação** — salva os resultados em `data/`
+
+### Outputs gerados em `data/`
+
+| Arquivo | Descrição |
+|---|---|
+| `propostas_tratadas.csv` | Propostas filtradas e limpas |
+| `programas_tratados.csv` | Programas filtrados e limpos |
+| `ids_tratados.csv` | Relacionamento programa × proposta tratado |
+| `convenios_tratados.csv` | Convênios tratados (base principal do BI) |
+| `convenios_tratados.xlsx` | Convênios tratados em Excel (input do Power BI) |
+| `pipeline.log` | Log de execução completo |
 
 ## BI Gerencial _(em desenvolvimento)_
 
