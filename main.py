@@ -2,6 +2,7 @@
 Arquivo destinado a executar o programa e exportar os dados
 """
 
+from extract import extracao_df
 from load import carregar_dados_csv
 
 from treatment import (
@@ -39,12 +40,19 @@ def exportar_dados(df, nome_arquivo):
         except Exception as erro:
             logger.error(f"Erro ao exportar {nome_arquivo}: {erro}")
 
+def exportar_csv(df, nome_arquivo):
+    caminho = SAIDA / f"{nome_arquivo}.csv"
+    df.to_csv(caminho, index=False, encoding="utf-8")
+    logger.info(f"{nome_arquivo} exportado em CSV em data/ com sucesso!")
+
 def export_ids(ids, nome_arquivo):
     ids.to_excel(SAIDA / f"{nome_arquivo}.xlsx", index=False)
     logger.info(f"{nome_arquivo} exportado em excel com sucesso!")
 
 if __name__ == "__main__":
     logger.info("=== Iniciando pipeline ===")
+
+    extracao_df()
 
     programas = carregar_dados_csv(SICONV_PROGRAMAS, 'Programas')
     propostas = carregar_dados_csv(SICONV_PROPOSTAS, 'Propostas')
@@ -56,6 +64,11 @@ if __name__ == "__main__":
     ids_tratados = tratar_ids(ids, programas_tratados)
     convenios_tratados = tratar_convenios(convenios, ids_tratados)
     # exibir_dados(convenios, nome='Convênios')
+
+    exportar_csv(propostas_tratadas, 'propostas_tratadas')
+    exportar_csv(programas_tratados, 'programas_tratados')
+    exportar_csv(ids_tratados, 'ids_tratados')
+    exportar_csv(convenios_tratados, 'convenios_tratados')
 
     exportar_dados(convenios_tratados, 'convenios_tratados')
     # export_ids(ids_tratados)
