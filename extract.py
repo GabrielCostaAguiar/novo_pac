@@ -2,13 +2,19 @@
 Arquivo destinado a extração das bases de dados direto do site do Transferegov
 """
 import zipfile
+from datetime import date
 import requests
 
 from config import (PROPOSTAS,
     PROGRAMAS,
     ID,
     CONVENIOS,
-    RAW_DIR
+    RAW_DIR,
+    SICONV_PROPOSTAS,
+    SICONV_PROGRAMAS,
+    SICONV_ID,
+    SICONV_CONVENIOS,
+    TODAY,
 )
 from logger import logger
 
@@ -19,7 +25,15 @@ def extracao_df():
         "ID": ID,
         "CONVENIOS": CONVENIOS,
     }
-    RAW_DIR.mkdir(exist_ok=True)
+    arquivos_raw = [SICONV_PROPOSTAS, SICONV_PROGRAMAS, SICONV_ID, SICONV_CONVENIOS]
+    todos_atuais = all(
+        f.exists() and date.fromtimestamp(f.stat().st_mtime) == TODAY
+        for f in arquivos_raw
+    )
+    if todos_atuais:
+        logger.info("Arquivos já atualizados hoje. Download ignorado.")
+        return
+
     logger.info("=== Iniciando extração dos arquivos ===")
     try:
         for nome, requisicao in requisicao_conjunta.items():

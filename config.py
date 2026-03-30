@@ -6,7 +6,11 @@ do pipeline de processamento de propostas SICONV.
 """
 
 from pathlib import Path
+from datetime import date
 import re
+
+# ── Data atual ────────────────────────────────────────────────────────────
+TODAY = date.today()
 
 # ── Diretório raiz do projeto ──────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent
