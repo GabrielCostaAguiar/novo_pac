@@ -17,11 +17,17 @@ from config import (
     SICONV_ID,
     PROPOSTAS_COLUNAS_EXCLUIR,
     PROGRAMAS_COLUNAS_EXCLUIR,
-    SAIDA, SICONV_CONVENIOS
+    SAIDA, SICONV_CONVENIOS,
+    RAW_DIR,
 )
 
 from logger import logger
 
+
+def criar_diretorios():
+    for diretorio in (RAW_DIR, SAIDA):
+        diretorio.mkdir(parents=True, exist_ok=True)
+        logger.info(f"Diretório garantido: {diretorio}")
 
 def exibir_dados(df, nome='df'):
     print(f"DataFrame em exibição: {nome}")
@@ -47,6 +53,7 @@ def export_ids(ids, nome_arquivo):
 if __name__ == "__main__":
     logger.info("=== Iniciando pipeline ===")
 
+    criar_diretorios()
     extracao_df()
 
     programas = carregar_dados_csv(SICONV_PROGRAMAS, 'Programas')
@@ -56,7 +63,7 @@ if __name__ == "__main__":
 
     propostas_tratadas = tratar_propostas(propostas, PROPOSTAS_COLUNAS_EXCLUIR)
     programas_tratados = tratar_programas(programas, PROGRAMAS_COLUNAS_EXCLUIR)
-    ids_tratados = tratar_ids(ids, programas_tratados)
+    ids_tratados = tratar_ids(ids, programas_tratados, propostas_tratadas)
     convenios_tratados = tratar_convenios(convenios, ids_tratados)
 
     exportar_dados(propostas_tratadas, 'propostas_tratadas')

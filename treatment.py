@@ -50,13 +50,15 @@ def tratar_programas(programas, colunas_excluir, uf='MG'):
         logger.error(f"Erro ao tratar programas: {error}")
         raise RuntimeError(f"Erro ao tratar programas: {error}") from error
 
-def tratar_ids(ids, programas_tratados):
+def tratar_ids(ids, programas_tratados, propostas_tratadas):
     try:
         ids_validos = programas_tratados['ID_PROGRAMA'].unique()
         ids_filtrados = ids[ids['ID_PROGRAMA'].isin(ids_validos)].reset_index(drop=True)
-        logger.info(f"IDs tratados: {len(ids_filtrados)} registros mantidos!")
+        ids_filtrados_propostas = ids_filtrados[ids_filtrados['ID_PROPOSTA'].isin(propostas_tratadas['ID_PROPOSTA'])].reset_index(drop=True)
+        
+        logger.info(f"IDs tratados: {len(ids_filtrados_propostas)} registros mantidos!")
 
-        return ids_filtrados
+        return ids_filtrados_propostas
 
     except Exception as error:
         logger.error(f"Erro ao tratar IDs: {error}")
