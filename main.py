@@ -8,7 +8,8 @@ from load import carregar_dados_csv
 from treatment import (
     tratar_propostas, tratar_programas,
     tratar_ids, tratar_convenios,
-    _limpar_chars_ilegais
+    _limpar_chars_ilegais,
+    consolidar_dados
 )
 
 from config import (
@@ -65,8 +66,9 @@ if __name__ == "__main__":
     programas_tratados = tratar_programas(programas, PROGRAMAS_COLUNAS_EXCLUIR)
     ids_tratados = tratar_ids(ids, programas_tratados, propostas_tratadas)
     convenios_tratados = tratar_convenios(convenios, ids_tratados)
+    propostas_filtradas = consolidar_dados(propostas_tratadas, ids_tratados, programas_tratados)
 
-    exportar_dados(propostas_tratadas, 'propostas_tratadas')
+    exportar_dados(propostas_filtradas, 'propostas_filtradas')
     exportar_dados(programas_tratados, 'programas_tratados')
     exportar_dados(ids_tratados, 'ids_tratados')
     exportar_dados(convenios_tratados, 'convenios_tratados')

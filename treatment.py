@@ -83,3 +83,23 @@ def _limpar_chars_ilegais(df):
     return df.apply(lambda col: col.map(
         lambda x: ILLEGAL_CHARS_RE.sub('', x) if isinstance(x, str) else x
     ))
+
+def consolidar_dados(propostas, ids, programas):
+    try:
+        colunas_programas = ['ID_PROGRAMA', 'NOME_PROGRAMA', 'SIT_PROGRAMA', 'ANO_DISPONIBILIZACAO',
+                             'NOME_SUBTIPO_PROGRAMA', 'DESCRICAO_SUBTIPO_PROGRAMA']
+
+        # ids já filtrados guiam a consolidação; propostas e programas entram via merge
+        df_consolidado = (
+            ids[['ID_PROPOSTA', 'ID_PROGRAMA']]
+            .merge(propostas, on='ID_PROPOSTA', how='inner')
+            .merge(programas[colunas_programas], on='ID_PROGRAMA', how='inner')
+            .query('ANO_DISPONIBILIZACAO > 2018')
+            .reset_index(drop=True)
+        )
+
+        logger.info(f"Dados consolidados com sucesso: {len(df_consolidado)} registros.")
+        return df_consolidado
+    except Exception as error:
+        logger.error(f"Erro ao consolidar dados: {error}")
+        raise RuntimeError(f"Erro ao consolidar dados: {error}") from error
